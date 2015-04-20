@@ -5,6 +5,7 @@ Provide support to render a dune.param.data.ParamSet as latex
 
 from .data import ParamSet
 from jinja2 import Template
+from collections import namedtuple
 
 def wash(ps):
     '''Return a dict which washes a ParamSet for LaTeX.
@@ -24,19 +25,42 @@ def wash(ps):
     for p in ps.params:
         var = p.variable.replace('-','_')
         ret[var] = p.value
-        ret[var+'_name'] = p.name
         ret[var+'_unit'] = p.units[p.unit].latex
-        ret[var+'_category'] = p.category
-        ret[var+'_provenance'] = p.provenance
-        ret[var+'_description'] = p.description
-        ret[var+'_notes'] = p.notes
+        if p.unit:
+            ret[var+'_siunitx'] = r'\SI{%s}{%s}' % (p.value, p.units[p.unit].latex)
+        else:
+            ret[var+'_siunitx'] = r'\SI{%s}{%s}' % (p.value, p.units[p.unit].latex)
+        # ret[var+'_name'] = p.name
+        # ret[var+'_category'] = p.category
+        # ret[var+'_provenance'] = p.provenance
+        # ret[var+'_description'] = p.description
+        # ret[var+'_notes'] = p.notes
     return ret
 
 
 def template(ps, template_text):
-    '''
-    Apply the ParamSet <ps> to the template_text and return the rendered LaTeX text.
+    '''Apply the ParamSet <ps> to the template_text and return the rendered LaTeX text.
+
+    The template has available the original ParamSet as "params" and
+    an additional dictionary keyed by variable name called latex, the
+    values of which has .value and .unit with forms suitable for the
+    args to \SI{}{}, .sicmd for a siunitx command and defname for a
+    name to use as a macro (all '-' and '_' removed).
+
     '''
     tmpl = Template(template_text)
-    dat = wash(ps)
-    return tmpl.render(**dat)
+
+    aux = dict()
+    LaTeX = namedtuple('LaTeX', 'unit value sicmd defname')
+    for p in ps.params.values():
+
+        value = p.value
+        unit = ps.units[p.unit].latex
+        if unit:
+            sicmd = r'\SI{%s}{%s}' % (value, unit)
+        else:
+            sicmd = r'\num{%s}' % (value,)
+        defname = r'\%s' % p.variable.replace('_','')
+        aux[p.variable] = LaTeX(unit, value, sicmd, defname)
+
+    return tmpl.render(params=ps.params, latex=aux)

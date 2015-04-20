@@ -13,6 +13,6 @@ setup(name='dune-params',
       install_requires = [l for l in open("requirements.txt").readlines() if l.strip()],
       entry_points='''
       [console_scripts]
-      dune-params=dune.params.main:cli
+      dune-params=dune.params.main:main
       ''',
       )

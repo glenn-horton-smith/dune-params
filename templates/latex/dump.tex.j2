@@ -1,0 +1,5 @@
+\begin{description}
+{% for var, lat in latex.items() %}
+\item[{{params[var].name}}] ({{lat.defname}}) {{params[var].description}}
+{% endfor %}
+\end{description}

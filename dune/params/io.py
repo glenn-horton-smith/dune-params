@@ -31,7 +31,8 @@ def load_xls(filename):
         row = ws.row(irow)
         cat,name,var,val,unit,prov,desc,note = [str(cell.value).strip() for cell in row[:8]]
         var.replace('-','_')
-        ps.units.has_key(val)    # test to see if we know the unit
+        if not ps.units.has_key(unit): # test to see if we know the unit
+            raise KeyError, 'No such unit: "%s"' % unit
         if cat:
             current_category = cat # allow for empty category cells, take from last seen.
         ps.params[var] = Param(var,name,val,unit,cat,prov,desc,note)
