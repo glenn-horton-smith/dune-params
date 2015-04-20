@@ -1,0 +1,30 @@
+#+TITLE: A System for Managing DUNE Parameters
+#+AUTHOR: Brett Viren
+
+* What is this?
+
+The =dune-params= package provides the Python module =dune.params= and a command line interface program called =dune-params=.  It provides a way to organize a set of fundamental parameters maintained in a spread sheet (following a particular schema) and derived parameters implemented as simple python code in order to generate output reports driven by (jinja2) templates.
+
+* Installation
+
+It is recommended to install the package via PyPI in a virtualenv.
+
+#+BEGIN_EXAMPLE
+  $ virtualenv venv
+  $ source venv/bin/activate
+  $ pip install dune-params
+  $ dune-params -h
+#+END_EXAMPLE
+
+* Development
+
+It is recommended to develop the package by installing it in a virtualenv.
+
+#+BEGIN_EXAMPLE
+  $ virtualenv venv
+  $ source venv/bin/activate
+  $ git clone git remote add origin git@github.com:DUNE/dune-params.git
+  $ cd dune-params
+  $ python setup.py develop
+  $ dune-params -h
+#+END_EXAMPLE

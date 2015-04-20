@@ -1,0 +1,5 @@
+.~lock.*
+*~
+*.egg-info
+venv
+*.pyc
