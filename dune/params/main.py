@@ -12,13 +12,16 @@ def cli():
 @cli.command()
 @click.argument('xlsfile', type=click.Path(exists=True))
 def dump(xlsfile):
+    '''
+    Dump the fundamental parameters from the given spreadsheet. 
+    '''
     from . import io
     from jinja2 import Template
 
     ps = io.load(xlsfile)
 
     tmpl = Template('''
-{% for n,p in params.items() %}{{ p.name}} ({{ n }})\n\t{{ p.value }} {{ p.unit }}
+{% for n,p in params|dictsort %}{{n}} ({{p.name}})\n\t{{ p.value }} {{ p.unit }}
 {% endfor %}''')
     s = tmpl.render(params = ps.params)
     click.echo(s)

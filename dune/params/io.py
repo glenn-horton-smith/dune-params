@@ -29,6 +29,8 @@ def load_xls(filename):
     for irow in range(1,ws.nrows):
         row = ws.row(irow)
         _,name,var,val,unit,prov,desc,note = [str(cell.value).strip() for cell in row[:8]]
+        if not var:
+            continue
         var.replace('-','_')
         ps.add(Param(var, val, unit, name, prov, desc, note))
 

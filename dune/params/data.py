@@ -16,11 +16,15 @@ class Param(object):
             if unit:
                 self.q = value.to(unit)
             else:
-                unit = value.unit
+                unit = getattr(value,'unit', '')
                 self.q = value
             value = self.q.magnitude
         else:
-            value = float(value) # fixme: should add type to spread sheet
+            try:
+                value = float(value) # fixme: should add type to spread sheet
+            except ValueError:
+                print 'Failed to convert "%s" = "%s" to float' %(variable, value)
+                raise
             self.q = Q(value, unit)            
         if not name:
             name = variable.replace('_',' ').replace('-',' ')
@@ -51,3 +55,11 @@ class ParamSet(object):
         p = self.params[name]
         return p.q              # mind them!
 
+    def keys(self):
+        return self.params.keys()
+
+    def items(self):
+        return [(k,getattr(k)) for k in self.keys()]
+
+    def dict(self):
+        return {k:self.params[k] for k in self.keys()}

@@ -21,10 +21,55 @@ It is recommended to install the package via PyPI in a virtualenv.
 The main usage of this package is to apply Python code to derive additional parameters from fundamental ones and then render these values in some manner through templates.   To use it you must write Jinja2 template files such as in [[./templates/]] and of course provide input in the form of a properly formatted  =.xls= file.  An example is in [[./tests/test-params.xls]].
 
 #+BEGIN_EXAMPLE
-  $ dune-params latex -t mytemplate.tex.j2 -o myfile.tex myparams.xls
+  $ dune-params render [-m renderer] -t mytemplate -o myfile myparams.xls
 #+END_EXAMPLE
 
 A real example is illustrated with the [[./tests/test_latex.sh]].  This test will produce two LaTeX files.  One which defines a LaTeX macro for each parameter with the value wrapped up in =siunitx= macros and a second one that generates a =description= environment with an entry for each parameter.
+
+** Templates and Rendering
+
+The =dune-params= program renders the parameters as driven by a template.  There are multiple render modules available in order to best suit the output format.  The can be specified on the =dune-params render= command line:
+
+#+BEGIN_EXAMPLE
+  $ dune params render -m your.render.module.function [...]
+#+END_EXAMPLE
+
+You may provide your own render module/functions or use one of the ones provided by =dune.params=.
+
+When rendering, the user provides a template that matches the render module.  When templates are processed certain data is available in the form of Jinja2 variables.  All templates will have a variable =params= provided which is a dictionary keyed by parameter variable names.  The values are instances of the [[./dune/params/data.py][Param]] class which has data elements:
+
+- =variable= :: an underscore-delimited name suitable for use as a variable
+- =value= :: the numerical value of the parameter
+- =unit= :: the unit, if any
+- =name= :: a short, human readable, space-separated short name
+- =provenance= :: URL, BibTeX key or other indication of where this parameter came from
+- =description= :: a longer, human readable description of the parameter
+- =notes= :: any free text 
+
+In addition, the template is given one variable for each parameter to reference directly.  The value of such variables are render-specific.  Likewise, the template markup syntax is render-specific.  This is done in order to provide a best match to the native syntax which the render module is targeting.  More details about each render module is given:
+
+
+*** Text 
+
+The default render module is =dune.params.text.render=.  It assumes the default Jinja2 markup is used in the template.  The individual parameter variables provided simply hold the corresponding instance of the =Param= class.
+
+*** LaTeX
+
+The LaTeX render module uses a slightly different markup than the default Jinja2, in order to work better with LaTeX syntax.  This example illustrates how to loop over the =params= dictionary and access the additional =latex= dictionary provided by the LaTeX render module.
+
+#+BEGIN_EXAMPLE
+~{ for n,p in params|dictsort }~
+\verb|~{{n}}~| & ~{{latex[n].sicmd}}~ & ~{{p.name}}~ \\
+~{ endfor }~
+#+END_EXAMPLE
+
+For this render module, the individual parameter variables are instances of the values of the =latex= dictionary.  They have data members:
+
+- =.unit= :: a LaTeX form for the unit
+- =.sicmd= :: a =siunitx= form for the quantity (value and unit)
+- =.defname= :: a LaTeX-compatible =\macroname= type name. 
+
+See [[./templates/latex/defs.tex.j2]] for an example usage.
 
 * Development
 
