@@ -32,10 +32,9 @@ def render(ps, template):
         defname = r'\%s' % p.variable.replace('_','')
         aux[p.variable] = LaTeX(unit, value, sicmd, defname)
 
-
     env = Environment(loader = FileSystemLoader(osp.dirname(template)),
                   block_start_string='~{', block_end_string='}~',
                   variable_start_string='~{{', variable_end_string='}}~')
 
     tmpl = env.get_template(osp.basename(template))
-    return tmpl.render(ps=ps, params=ps.dict(), latex=aux)
+    return tmpl.render(ps=ps, params=ps.dict(), latex=aux, **aux)

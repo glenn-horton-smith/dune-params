@@ -33,10 +33,10 @@ def dump(xlsfile):
               help='Set the rendering module.')
 @click.option('-o','--output', required=True, type=click.Path(writable=True),
               help='Set the output file to generate')
-@click.option('-m','--module', multiple=True,
+@click.option('-f','--filter', multiple=True,
               help='Set a filter.module.function to filter the parameters')
 @click.argument('xlsfile', required=True)
-def render(template, render, output, module, xlsfile):
+def render(template, render, output, filter, xlsfile):
     '''
     Render the parameters using the template with filtering.
     '''
@@ -45,7 +45,7 @@ def render(template, render, output, module, xlsfile):
     from . import io
     ps = io.load(xlsfile)
 
-    for modfuncname in module:
+    for modfuncname in filter:
         modname, funcname = modfuncname.rsplit('.',1)
         mod = importlib.import_module(modname)
         func = getattr(mod,funcname)
@@ -55,8 +55,7 @@ def render(template, render, output, module, xlsfile):
     rendmod = importlib.import_module(rendmodname)
     rendfunc = getattr(rendmod, rendfuncname)
     
-    tmpl = open(template).read()
-    text = rendfunc(ps, tmpl)
+    text = rendfunc(ps, template)
     open(output,'w').write(text)
 
 
