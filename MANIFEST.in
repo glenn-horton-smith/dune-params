@@ -1,0 +1,4 @@
+include requirements.txt
+include data/*.xls
+include templates/text/*.txt
+include templates/latex/*.tex

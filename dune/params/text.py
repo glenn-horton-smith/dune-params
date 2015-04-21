@@ -2,13 +2,18 @@
 '''
 Provide support to render a dune.param.data.ParamSet as plain text dump
 '''
+import os.path as osp
 
 from .data import ParamSet
 from jinja2 import Template
 
-def template(ps, template_text):
+from jinja2 import Environment, FileSystemLoader
+
+def render(ps, template):
     '''
     Apply the ParamSet <ps> to the template_text and return the rendered LaTeX text.
     '''
-    tmpl = Template(template_text)
-    return tmpl.render(params = ps.params, **ps.dict())
+    env = Environment(loader = FileSystemLoader(osp.dirname(template)))
+    tmpl = env.get_template(osp.basename(template))
+    return tmpl.render(ps=ps, params=ps.dict(), **ps.dict())
+

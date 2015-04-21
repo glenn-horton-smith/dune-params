@@ -3,3 +3,8 @@
 *.egg-info
 venv
 *.pyc
+build
+dist
+*.aux
+*.log
+*.pdf
