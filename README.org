@@ -13,8 +13,18 @@ It is recommended to install the package via PyPI in a virtualenv.
   $ virtualenv venv
   $ source venv/bin/activate
   $ pip install dune-params
-  $ dune-params -h
+  $ dune-params 
 #+END_EXAMPLE
+
+* Usage
+
+The main usage of this package is to apply Python code to derive additional parameters from fundamental ones and then render these values in some manner through templates.   To use it you must write Jinja2 template files such as in [[./templates/]] and of course provide input in the form of a properly formatted  =.xls= file.  An example is in [[./tests/test-params.xls]].
+
+#+BEGIN_EXAMPLE
+  $ dune-params latex -t mytemplate.tex.j2 -o myfile.tex myparams.xls
+#+END_EXAMPLE
+
+A real example is illustrated with the [[./tests/test_latex.sh]].  This test will produce two LaTeX files.  One which defines a LaTeX macro for each parameter with the value wrapped up in =siunitx= macros and a second one that generates a =description= environment with an entry for each parameter.
 
 * Development
 
@@ -26,5 +36,6 @@ It is recommended to develop the package by installing it in a virtualenv.
   $ git clone git remote add origin git@github.com:DUNE/dune-params.git
   $ cd dune-params
   $ python setup.py develop
-  $ dune-params -h
+  $ dune-params 
 #+END_EXAMPLE
+

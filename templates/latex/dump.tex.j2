@@ -1,5 +1,5 @@
 \begin{description}
-{% for var, lat in latex.items() %}
+{% for var,lat in latex|dictsort %}
 \item[{{params[var].name}}] ({{lat.defname}}) {{params[var].description}}
 {% endfor %}
 \end{description}

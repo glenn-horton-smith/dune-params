@@ -26,16 +26,12 @@ def load_xls(filename):
 
     # slurp parameters work sheet
     ws = wb.sheet_by_name('Parameters')
-    current_category = None
     for irow in range(1,ws.nrows):
         row = ws.row(irow)
-        cat,name,var,val,unit,prov,desc,note = [str(cell.value).strip() for cell in row[:8]]
+        _,name,var,val,unit,prov,desc,note = [str(cell.value).strip() for cell in row[:8]]
         var.replace('-','_')
-        if not ps.units.has_key(unit): # test to see if we know the unit
-            raise KeyError, 'No such unit: "%s"' % unit
-        if cat:
-            current_category = cat # allow for empty category cells, take from last seen.
-        ps.params[var] = Param(var,name,val,unit,cat,prov,desc,note)
+        ps.add(Param(var, val, unit, name, prov, desc, note))
+
     return ps
 
 

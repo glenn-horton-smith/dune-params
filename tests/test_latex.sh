@@ -20,6 +20,6 @@ dune-params latex -t $srcdir/templates/latex/dump.tex.j2 -o $workdir/body.tex $t
 pushd $workdir 
 pdflatex main.tex || exit 1
 popd
-echo "Removing $workdir"
-rm -rf $workdir
+echo "Not removing $workdir"
+#rm -rf $workdir
  

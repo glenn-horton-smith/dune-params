@@ -38,7 +38,7 @@ def wash(ps):
     return ret
 
 
-def template(ps, template_text):
+def render(ps, template_text):
     '''Apply the ParamSet <ps> to the template_text and return the rendered LaTeX text.
 
     The template has available the original ParamSet as "params" and
