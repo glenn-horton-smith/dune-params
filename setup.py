@@ -10,7 +10,7 @@ setup(name='dune-params',
 
       provides = [ 'dune', "dune.params" ],
       requires = ['dune'],
-      version='0.0.0',
+      version='0.0.1',
       url='https://github.com/DUNE/dune-params',
       author='Brett Viren',
       author_email='bv@bnl.gov',
