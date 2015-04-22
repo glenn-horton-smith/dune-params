@@ -11,7 +11,7 @@ class Unit(namedtuple("Unit","name comment latex")):
 
 class Param(object):
 
-    def __init__(self, variable, value, unit=None, name=None, provenance='', description='', notes=''):
+    def __init__(self, variable, value, unit=None, name=None, provenance='', description='', notes='', precision=None):
         if type(value) == Q:
             if unit:
                 self.q = value.to(unit)
@@ -35,6 +35,7 @@ class Param(object):
         self.provenance = provenance
         self.description = description
         self.notes = notes
+        self.precision = precision
     pass
 
 class ParamSet(object):

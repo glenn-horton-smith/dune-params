@@ -28,11 +28,11 @@ def load_xls(filename):
     ws = wb.sheet_by_name('Parameters')
     for irow in range(1,ws.nrows):
         row = ws.row(irow)
-        _,name,var,val,unit,prov,desc,note = [str(cell.value).strip() for cell in row[:8]]
+        _,name,var,val,unit,prov,desc,note,precision = [str(cell.value).strip() for cell in row[:9]]
         if not var:
             continue
         var.replace('-','_')
-        ps.add(Param(var, val, unit, name, prov, desc, note))
+        ps.add(Param(var, val, unit, name, prov, desc, note, precision))
 
     return ps
 

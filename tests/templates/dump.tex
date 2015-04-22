@@ -3,13 +3,13 @@
 \usepackage[Q=yes]{examplep}
 \begin{document}
 \begin{description}
-~{ for n,p in params|dictsort }~\item[\Q{~{{n}}~}] (~{{p.name}}~) ~{{ p.value }}~ ~{{ p.unit }}~
+~{ for n,p in data|dictsort }~\item[\Q{~{{n}}~}] (~{{p.name}}~) ~{{ p.value }}~ ~{{ p.unit }}~
 ~{ endfor }~
 \end{description}
 
 \begin{tabular}[h]{r l r}
-~{ for n,p in params|dictsort }~
-\verb|~{{n}}~| & ~{{latex[n].sicmd}}~ & ~{{p.name}}~ \\
+~{ for n,p in data|dictsort }~
+\verb|~{{n}}~| & ~{{p.sicmd}}~ & ~{{p.name}}~ \\
 ~{ endfor }~
 \end{tabular}
 

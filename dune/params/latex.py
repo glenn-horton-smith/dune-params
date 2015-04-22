@@ -20,21 +20,36 @@ def render(ps, template):
     '''
 
     aux = dict()
-    LaTeX = namedtuple('LaTeX', 'unit value sicmd defname')
-    for p in ps.params.values():
+
+    # extend the special data for convenience
+    input_parameters = ps.params.values()
+    LaTeX = namedtuple('LaTeX', 'sicmd defname'.split() + input_parameters[0].__dict__.keys())
+
+    for p in input_parameters:
 
         value = p.value
         unit = ps.units[p.unit].latex
-        if unit:
-            sicmd = r'\SI{%s}{%s}' % (value, unit)
+        precision = getattr(p, 'precision', None)
+        if precision is None:
+            precision = ''
         else:
-            sicmd = r'\num{%s}' % (value,)
+            precision = '[round-mode=places,round-precision=%s]' % int(float(precision))
+        if unit:
+            sicmd = r'\SI%s{%s}{%s}' % (precision, value, unit)
+        else:
+            sicmd = r'\num%s{%s}' % (precision,value)
         defname = r'\%s' % p.variable.replace('_','')
-        aux[p.variable] = LaTeX(unit, value, sicmd, defname)
+
+        dat = dict(p.__dict__)
+        dat['unit'] = unit
+        dat['sicmd'] = sicmd
+        dat['defname'] = defname
+        lat = LaTeX(**dat)
+        aux[p.variable] = lat
 
     env = Environment(loader = FileSystemLoader(osp.dirname(template)),
                   block_start_string='~{', block_end_string='}~',
                   variable_start_string='~{{', variable_end_string='}}~')
 
     tmpl = env.get_template(osp.basename(template))
-    return tmpl.render(ps=ps, params=ps.dict(), latex=aux, **aux)
+    return tmpl.render(data=aux, **aux)
