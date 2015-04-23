@@ -1,0 +1,154 @@
+#+TITLE: DUNE Params Manual
+
+* Overview
+
+The =dune-params= package provides Python modules and a command line
+program to help manage parameter sets and any derivations and provides
+a mechanism to render output reports which present the parameters in
+some form.
+
+* How it works
+
+Conceptually, the ingredients of the =dune-params= processing are as shown:
+
+[[./flow.png]]
+
+In words:
+
+- Input spreadsheet :: holds "external" or "fundamental" parameters that are used as input to the system.  The spreadsheet must follow a particular schema (format) so that =dune-params= knows how to read it.
+- Load :: the spreadsheet is loaded into memory and each parameter it is defined is turned into a =Param= object which produces
+- Input params :: a set of input parameters used for input to
+- Derive params :: zero or more Python "filter" functions which read the current parameter set and add to it additional, derived parameters.  These are optional, may be supplied by the end-user and =dune-params= comes with a few ready to use.
+- All params :: the result of any of the parameter derivations
+- Render params :: the parameter set is then rendered.  This rendering may produce another set of parameters which are reformatted to better match the targeted report format that the renderer supports.  Along with a report template it produces:
+- Report data :: is the result of applying the template engine (Jinja2) to the template in the context of the parameters to produce the content of the report (nominally text)
+- Write :: writes out this content to
+- Output report :: the final resulting report (text file, LaTeX tables or macro definitions, another spread sheet, etc)
+
+* User customization
+
+Most aspects of this process are fully under the control of the end-user.  In particular the user may supply:
+
+- input spreadsheet (required from user)
+- parameter derivations (optionally provided by user, built-ins provided)
+- renderer (optionally provided by user, built-ins provided)
+- template (optionally provided by user, examples provided)
+
+* Use in LaTeX
+
+The initial intention of the =dune-params= system was to provide a mechanism to manage input and derived parameters in the context of the [[https://github.com/DUNE/cdr][DUNE CDR]] and in particular estimation of the expected data rates.  Part of this management was to provide a means of assuring consistency throughout the document wherever quantitative parameters are used.  
+
+Some strategies which exploit =dune-params= for this are:
+
+ - produce a =.tex= file which defines all parameters as LaTeX macros with values expressed in proper LaTeX forms (in particular making use of =siunitx=).
+ - produce summary tables of subsets of parameters
+ - capture the input parameters and the derivation in a git repository for version control 
+ - automatically regenerate the document in response to improvements in input parameter values and estimation calculations
+ - force consistent numbers across disparate volumes and chapters written by different authors
+
+* Input Spreadsheet
+
+The input spreadsheet file must supply two sheets that follow a particular format:
+
+- Parameters :: define the input parameters
+- Units :: define valid units and provide LaTeX equivalents.
+
+These quantities are all available to any filter and render modules applied to the parameter by =dune-params=.
+An example is in [[../tests/test-params.xls][test-params.xls]] spreadsheet.  The following sections describes each sheet in more detail.
+
+** Parameter sheet
+
+The parameter sheet must start with a row of headings (ignored) and have columns holding the content in this order:
+
+- Category :: a grouping category name for a subset of parameters.  It need only be written in the first row of the group.
+- Name :: a brief, space-separated, human readable name for the parameter
+- Variable :: an underscore-separated, Python-compatible variable name
+- Value :: the numeric value of the parameter
+- Units :: the unit written to match the Units sheet.  Parameters with no units have this cell blank.
+- Provenance :: a URL, a BibTeX, or other reference from where the parameter is taken
+- Description :: free form text giving any desired description of the parameter
+- Notes :: any notes about the parameter (meta information)
+- Precision :: the desired precision (number of decimal places) for displaying the value.
+
+** Units sheet
+
+The Units sheet is meant to provide a mapping from the units used in
+the parameter sheet to render-specific forms.  This sheet starts with
+a row of headings (ignored) and has columns holding the content in
+this order:
+
+- Units :: the unit label used in the Parameter sheet
+- Comment :: any comment about the unit
+- LaTeX :: a LaTeX-form for the unit (assuming the use of =siunitx=)
+- etc... :: additional render targets may be accommodated by adding additional columns
+
+* Templates and Rendering
+
+A =dune-params= render module is responsible for several things:
+
+ - accepting a parameter set
+ - producing a derived dictionary tailored to the render target
+ - accepting a template written for the render target
+ - applying the template engine (Jinja2) to produce report data
+
+In general, each render target may have a slightly different template
+language in order that templates may be written in a way that is best
+tailored to whatever native format is being targeted.  Likewise the
+parameter data is tailored to provide forms suitable for the target
+format.
+
+The =dune-params= package provides examples under [[../templates/]] and
+includes several tests including [[../tests/test_latex.sh]] which will
+produce a LaTeX/PDF from the example spreadsheet.
+
+The package provides some ready-to-use render modules and you may
+provide your own through the =dune-params= command line program.  
+
+For all rendering targets some basic data are provided to the
+template.  First, the parameter information is available via a
+dictionary called =data= which is keyed by the parameter variable
+names.  The values are objects with at least these data members:
+
+- =variable= :: an underscore-delimited name suitable for use as a variable
+- =value= :: the numerical value of the parameter
+- =unit= :: the unit, if any in form suitable for render target
+- =name= :: a short, human readable, space-separated short name
+- =provenance= :: URL, BibTeX key or other indication of where this parameter came from
+- =description= :: a longer, human readable description of the parameter
+- =notes= :: any free text 
+- etc :: additional quantities specific to a particular render module
+
+In addition, to =data= the template is given a set of variables named
+after each parameter variable which provides access to this
+information on a per-parameter basis.
+
+As indicated in this list above, depending on the render module
+additional items may be available.  Likewise, the template markup
+syntax is specific to the render module.  This is done in order to
+provide a best match to the native syntax which the render module is
+targeting.  More details about each render module are given next.
+
+*** Text 
+
+The default render module is =dune.params.text.render=.  It assumes
+the default Jinja2 markup is used in the template.  The individual
+parameter variables provided simply hold the corresponding instance of
+the =Param= class.
+
+*** LaTeX
+
+The LaTeX render module uses a slightly different markup than the default Jinja2, in order to work better with LaTeX syntax.  This example illustrates how to loop over the =params= dictionary and access the additional =data= dictionary provided by the LaTeX render module.
+
+#+BEGIN_EXAMPLE
+~{ for n,p in params|dictsort }~
+\verb|~{{n}}~| & ~{{latex[n].sicmd}}~ & ~{{p.name}}~ \\
+~{ endfor }~
+#+END_EXAMPLE
+
+For this render module, the additional or changed parameter values of the =data= dictionary are:
+
+- =.unit= :: a LaTeX form for the unit
+- =.sicmd= :: a =siunitx= form for the quantity (value and unit)
+- =.defname= :: a LaTeX-compatible =\macroname= type name. 
+
+See [[../templates/latex/defs.tex]] for an example usage.

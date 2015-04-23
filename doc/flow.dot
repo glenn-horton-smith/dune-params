@@ -1,0 +1,31 @@
+digraph "flow" {
+	rankdir="LR";
+
+	// data
+	node[group=data, shape=ellipse, fontcolor=purple]
+	extparams[label="Input params"];
+	allparams[label="All params"];
+	reportdata[label="Report data"];
+	
+	// files
+	node[group=files, shape=folder, fontcolor=blue]
+	spreadsheet[label="Input spreadsheet"];
+	templatefile[label="Report template"];
+	outputfile[label="Output report"];
+
+	// processing
+	node[group=proc, shape=component, fontcolor=red]
+	load[label="Load"];
+	calc[label="Derive params"];
+	render[label="Render params"];
+	write[label="Write"];
+
+	subgraph cluster_duneparams {
+		load->extparams->calc->allparams->render->reportdata->write;
+		label="dune-param";
+	}
+	
+	spreadsheet->load;
+	templatefile->render;
+	write->outputfile;
+}
