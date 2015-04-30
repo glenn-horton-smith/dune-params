@@ -29,11 +29,9 @@ def render(ps, template):
 
         value = p.value
         unit = ps.units[p.unit].latex
-        precision = getattr(p, 'precision', None)
-        if precision is None:
-            precision = ''
-        else:
-            precision = '[round-mode=places,round-precision=%s]' % int(float(precision))
+        precision_raw = getattr(p, 'precision') or 0
+        #print 'PRECISION: %s"%s"' % (type(precision_raw), precision_raw)
+        precision = '[round-mode=places,round-precision=%s]' % int(float(precision_raw))
         if unit:
             sicmd = r'\SI%s{%s}{%s}' % (precision, value, unit)
         else:
