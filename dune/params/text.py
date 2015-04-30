@@ -15,5 +15,5 @@ def render(ps, template):
     '''
     env = Environment(loader = FileSystemLoader(osp.dirname(template)))
     tmpl = env.get_template(osp.basename(template))
-    return tmpl.render(ps=ps, params=ps.dict(), **ps.dict())
+    return tmpl.render(data=ps.dict(), **ps.dict())
 
