@@ -15,12 +15,24 @@ local param = function(text, value, unc=0.0, prec=0, siunitx = null) {
     value: value,
     uncertainty: unc,
     precision: prec,
+    siunitx: siunitx,
     latexname: "",
     latexdef:
     if std.type(siunitx) == 'null'
     then '\\def\\%s{%.*f}' % [self.latexname, prec, value]
     else '\\def\\%s{\\SI{%.*f}{%s}}' % [self.latexname, prec, self.value/siunitx.uval, siunitx.unit],
 };
+
+local dotten = function(obj, ctx='')
+if std.type(obj) == 'string'
+then {[ctx]:obj}
+else if std.objectHas(obj, 'value')
+then { [ctx]:
+       if std.objectHas(obj,'siunitx') && std.type(obj.siunitx) != 'null'
+       then std.toString(obj.value/obj.siunitx.uval) +' '+ obj.siunitx.unit
+       else obj.value }
+else std.foldl(function(a,b) a+b, std.map(function(k) dotten(obj[k], ctx+'.'+k), std.objectFields(obj)), {});
+
 
 local flatten = function(obj, ctx='') 
 if std.type(obj) == 'string' || std.objectHas(obj, 'text') then { [ctx]: obj + {variable:ctx,
@@ -57,7 +69,8 @@ else { [k]:addctx(obj[k], ctx+[k]) for k in std.objectFields(obj) };
                     },
                 },
                 wire: {
-                    diameter: param("wire diameter",0.150*units.mm, prec=3),
+                    diameter: param("wire diameter",0.150*units.mm, prec=3,
+                                    siunitx={uval:units.mm, unit:'\\mm'}),
                     plane: {
                         u: {
                             pitch: param("U plane wire pitch",4.669*units.mm, unc=0.1*units.mm, prec=3,
@@ -78,4 +91,5 @@ else { [k]:addctx(obj[k], ctx+[k]) for k in std.objectFields(obj) };
     },
     wctx: addctx($.dune, ['dune']),
     flat: flatten($.wctx, 'dune'),
+    dot: dotten($.wctx, 'dune'),
 }
