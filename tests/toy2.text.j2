@@ -1,0 +1,10 @@
+
+
+{{sp.apa.elec.femb.channels.text}} = {{sp.apa.elec.femb.channels.value}}
+
+{{sp.apa.wire.plane.u.pitch.text}} is {{"%.*f mm"|format(sp.apa.wire.plane.u.pitch.precision,sp.apa.wire.plane.u.pitch.value / units.mm)}}
+
+LaTeX examples:
+{% set sr = sp.apa.elec.asic.sample_rate -%}
+% {{sr.text}}
+{{sr.latexdef}}

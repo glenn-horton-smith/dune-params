@@ -1,0 +1,5 @@
+{% for name,obj in flat.items() %}
+% {{ obj.text }}
+% Context {{ obj.context|join('.') }}
+{{ obj.latexdef }}
+{% endfor %}
