@@ -24,5 +24,6 @@ setup(name='dune-params',
       entry_points='''
       [console_scripts]
       dune-params=dune.params.main:main
+      dune-reqs=dune.reqs.main:main
       ''',
       )
