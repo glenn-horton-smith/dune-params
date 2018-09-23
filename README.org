@@ -44,3 +44,83 @@ If you wish to develop =dune-params= directly, here is how to prepare a developm
 
 As you edit the code, repeat the =pip install= command.
 
+
+* Specifications
+
+For the DUNE TDR we are extending DUNE Params to handle
+"specifications" (specs).  These are sometimes called "requirements"
+and other things.  For the purpose here they are a brief statement of
+some quantity or quality of some aspect of the DUNE experiment which
+must be met along with organizational metadata, identifiers, comments,
+notes, etc.
+
+A spec is provided as a row in a "system spec spreadsheet" (SSS).  An
+SSS is composed of columns each following a format and semantic
+interpretation.  Multiple SSS may be aggregated into one workbook (eg,
+one ~.xlsx~ file).  An SSS is identified by a brief label which must
+be unique across all DUNE spec systems after any non-alphabetical
+characters are removed and the result is mapped to one case.
+
+The columns of an SSS are described as they should be entered into the
+source SSS below.  The first term in each description gives the
+expected data type for the cell.  
+
+- integer :: an integral number
+- alphabet :: consisting only of the 26 characters from the English alphabet (no space, punctuations)
+- text :: any valid LaTeX text, see comments below
+- enum :: a choice from a fixed menu
+
+Comments on LaTeX:
+
+- any quantity with a unit must be expressed using ~siunitx~, ie ~\SI{4.7}{\milli\meter}~ or ~\SI{4.7}{\mm}~.
+- math mode must be made explicit.  Ie, enter ~$\pm \SI{0.5}{\mm}$~.
+
+Column definitions
+
+- order :: integer, a non-negative integer identifier (ID) unique
+           across all rows in one SSS.  Rows may be reordered within
+           one SSS but this ID must remain associated with the other
+           entries in the row.  Gaps in numbering are allowed and
+           indeed if a spec is deleted its order number should not be
+           reused.  Setting an order number to an illegal value will
+           be interpreted as deletion while retaining the row in the
+           SSS.
+
+- label :: alphabet, a lower-case, alphabetical identifier unique to
+           all rows in the SSS.  This should be short but evoke the
+           meaning of the spec.  Along with the SSS label it is used
+           to uniquely identify a spec in various contexts across the
+           entire set of specs.
+
+- field :: enum, the field of study from which the spec derives
+           (~scientific~, ~engineering~).
+
+- title :: text, succinctly define the subject of the spec.  When
+           discussing this spec in the text or among peers assume you
+           will repeat these words verbatim one thousand times.
+           Quantitative qualifiers such as "minimum" should be omitted
+           (they will be provided in "requirement").  Any identifiers
+           pertaining to the system in which the spec resides should
+           be omitted.
+
+- requirements :: text, succinctly state, preferably only using a
+                  quantitative statement and not verbiage, the
+                  requirement this spec states.  Do use inequalities
+                  to imply a max/min quantities or plus/minus to
+                  indicate a tolerance.  Do use ~\SI{xxx}{unit}~ for
+                  correct units.  Do use latex.  Do *NOT* use Unicode
+                  or other non-ASCII glyphs.
+
+- goal :: text, a value of the spec which may be expected.  
+
+- explanation :: text, any description, reasoning or justification for
+                 the choice of the value in the requirement cell.
+
+- notes :: text, any additional commentary on the spec
+
+- data :: text, any data oriented validation, and particularly any
+          from protoDUNE, for the requirement value.
+
+- sim :: text, any simulation or calculation oriented validation for
+         the requirement value.
+

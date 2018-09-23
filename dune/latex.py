@@ -3,12 +3,8 @@
 LaTeX support
 '''
 conversions = {
-    "<":r'$<$',
-    "<<": r'$\ll$',
-    ">":r'$>$',
-    ">>": r'$\gg$',
-     "°":r'$^\circ$',
-    '±':r'$\pm$',
+    "<<": r'\ensuremath{\ll}',
+    ">>": r'\ensuremath{\gg}',
     '%':r'\%',
 }
 
@@ -22,8 +18,23 @@ def symbol(sym):
     except KeyError:
         return sym
 
+sloppy2utf8 = {
+    "<<": r'≪',
+    ">>": r'≫',
+}
+def make_utf8(sym):
+    try:
+        return sloppy2utf8[sym.lower()]
+    except KeyError:
+        return sym
+        
+
 def clean(string):
-    return ''.join([symbol(s) for s in string])
+    #from pylatexenc.latexencode import utf8tolatex
+    #string = ' '.join([make_utf8(s) for s in string.split(' ')])
+    #return ' '.join([symbol(s) for s in string.split(' ')])
+    # return ' '.join([symbol(s) for s in utf8tolatex(string).split()])
+    return string
 
 def siunitx(value, unit, numf='%f', siuopts=''):
     '''
