@@ -43,7 +43,7 @@ def render(template, render, output, xlsfile):
     rendfunc = getattr(rendmod, rendfuncname)
     
     text = rendfunc(dat, template)
-    open(output,'w').write(text)
+    open(output,'w').write(text.encode('utf-8'))
 
 
 
