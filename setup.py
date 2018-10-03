@@ -8,7 +8,7 @@ setup(name='dune-params',
       # than provides the top-level "dune" module and maybe some
       # README describing how to add new submodules.
 
-      provides = [ 'dune', "dune.params" ],
+      provides = [ 'dune', "dune.params", "dune.reqs" ],
       requires = ['dune'],
       version='0.0.3',
       description='Module and command line interface to help manage parameter sets',
