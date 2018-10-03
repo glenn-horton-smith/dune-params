@@ -8,6 +8,9 @@ Item,Type,System,Quantity/Parameter,Requirement,Goal,Explanation,Comments,Notes,
 from . import data
 from dune import latex
 
+# A B C D E F G H I J  K  L  M  N  O  P
+# 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+
 def load_row(cat, row):
     '''
     Load a row from the spread sheet.  There are things we need to fix:
@@ -15,33 +18,36 @@ def load_row(cat, row):
     2) need a way to parse "comparison operator", number and unit from requirement
     3) 
     '''
-    qp = row[3].value           # fixme, need explicit "short name"
-    req = row[4].value,         # fixme, need to parse this
-    if req:
-        req = latex.clean(req[0])
-    else:
-        req=''
-    validation = dict(protodune=row[9].value, simulation=row[10].value)
+    qp = row[6].value
+
+    req = row[9].value
+
+    validation = dict(protodune=row[15].value, simulation=row[16].value)
 
     return data.Spec(
         category = cat,
-        label = qp.replace(" ","").replace("/","").replace("-",""),
+        label = qp,
         number = int(row[0].value),
-        field = row[1].value,
-        system = row[2].value,
-        title = qp,
+        field = row[2].value,
+        system = row[1].value,
+        title = row[5].value,
         requirement = req,
-        goal = row[5].value,          # maybe make this an enum?
-        explanation = row[6].value,
-        comment = row[7].value,
-        notes = row[8].value,
+        goal = row[10].value,          # maybe make this an enum?
+        explanation = row[11].value,
+        comment = "", # row[7].value,
+        notes = "", # row[8].value,
         validation = validation)
 
 
-def load_sheet(sheet):
+def load_sheet(sheet, required_columns=22):
     ret = list()
     sheet.name
-    for row in list(sheet.get_rows())[1:]:
+    for row in list(sheet.get_rows())[2:]:
+        if not row:
+            continue
+        if required_columns != len(row):
+            print ("skipping row with wrong number of columns %d != %d" % (len(row), required_columns))
+            continue
         r = load_row(sheet.name, row)
         ret.append(r)
     return ret

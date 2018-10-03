@@ -22,23 +22,43 @@
 
 \section{The main table}
 
+This table would enumerate very spec across all subsystem ``tabs''.
+
 \begin{table}[htp]
   \caption{Specification for ~{{ specs[0].category }}~}
   \centering
-  \begin{tabular}{|N|C{2cm}|C{2cm}|L{5cm}|L{5cm}|}
+  \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
     \hline
-    \multicolumn{1}{|c|}{ID} & Field & System & Title & Specification \\
+    \multicolumn{1}{|c|}{ID} & Field  & Title & Spec & Rationale & ProtoDUNE Validation\\
     \hline
     ~{ for s in specs }~
-    \label{spectable:~{{ s.label }}~} & ~{{ s.field }}~ & ~{{ s.system }}~ & ~{{ s.title }}~ & ~{{ s.requirement }}~ \\ \hline
+    \label{spectable:~{{ s.label }}~} & ~{{ s.field }}~\  & ~{{ s.title }}~ & ~{{ s.requirement }}~ & ~{{ s.explanation }}~ & ~{{s.validation.protodune}}~ \\ \hline
     ~{ endfor }~
   \end{tabular}
   \label{tab:spectable:~{{ specs[0].category }}~}
 \end{table}
 
 
-Here I reference a spec~\ref{spectable:gapsbetweenAPAs} in table~\ref{tab:spectable:DSS} which is in the same section.
+Here I reference the Specification~\ref{spectable:gap-between-apas} in Table~\ref{tab:spectable:DSS} which is in the same section.
 
-\section{By category}
+\section{Another section}
+
+Here's some other table.
+
+\begin{table}[htp]
+  \caption{Blah}
+  \centering
+  \begin{tabular}{|c|}
+    \hline
+    \label{row:cool} DUNE is cool \\
+    \hline
+  \end{tabular}
+  \label{tab:cool}
+\end{table}
+
+And here it is referenced as Table~\ref{tab:cool}.  
+I can still reference a row in the previous table,
+Table~\ref{tab:spectable:DSS}
+row~\ref{spectable:drift-field-uniformity}.
 
 \end{document}
