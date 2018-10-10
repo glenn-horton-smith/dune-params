@@ -22,20 +22,22 @@
 
 \section{The main table}
 
-This table would enumerate every spec across all subsystem ``tabs''.
+This table would enumerate very spec across all subsystem ``tabs''.
 
 \begin{table}[htp]
-  \caption{Specification for ~{{ specs[0].category }}~}
+  \caption{Specification for DSS}
   \centering
   \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
     \hline
     \multicolumn{1}{|c|}{ID} & Field  & Title & Spec & Rationale & ProtoDUNE Validation\\
     \hline
-    ~{ for s in specs }~
-    \label{spectable:~{{ s.label }}~} & ~{{ s.field }}~\  & ~{{ s.title }}~ & ~{{ s.requirement }}~ & ~{{ s.explanation }}~ & ~{{s.validation.protodune}}~ \\ \hline
-    ~{ endfor }~
+    
+    \label{spectable:gap-between-apas} & Science\  & Gap width between adjacent APAs & $<$\SI{20}{\milli\meter} & Some gap is necessary to allow for detector shrinkage. Installation of electron diverters can mitigate effects of small gaps on reconstruction. & Example: "Simulations of 10-50 mm gaps showed slight and gradual drop in efficiency over 20 mm." \\ \hline
+    
+    \label{spectable:drift-field-uniformity} & Science\  & Drift field uniformity throughout volume & $<1$\%  & Inhomogeneities in the field will degrade reconstruction performance. Misalignments of TPC components could introduce drift field non-uniformities beyond those specified in the HVS requirements. & Example: "Simulations of misalignments of $<$1\% do not significantly affect reconstruction." \\ \hline
+    
   \end{tabular}
-  \label{tab:spectable:~{{ specs[0].category }}~}
+  \label{tab:spectable:DSS}
 \end{table}
 
 

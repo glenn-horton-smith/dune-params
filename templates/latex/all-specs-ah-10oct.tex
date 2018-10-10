@@ -5,6 +5,10 @@
 \usepackage{textcomp}
 \usepackage{siunitx}
 \usepackage{array}
+\usepackage{tabularx}
+\usepackage{tabulary}
+\usepackage[table]{xcolor}
+\RequirePackage{booktabs}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -17,6 +21,8 @@
 % Reset the rowcntr counter at each new tabular
 \AtBeginEnvironment{tabular}{\setcounter{rowcntr}{0}}
 
+\definecolor{dunetablecolor}{RGB}{125,174,211} % matches lighter blue color from Diana's scheme 
+
 
 \begin{document}
 
@@ -24,41 +30,33 @@
 
 This table would enumerate every spec across all subsystem ``tabs''.
 
+
 \begin{table}[htp]
   \caption{Specification for ~{{ specs[0].category }}~}
   \centering
-  \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
+  \begin{tabular}{ |l|p{0.45\textwidth}|p{0.25\textwidth}| }
     \hline
-    \multicolumn{1}{|c|}{ID} & Field  & Title & Spec & Rationale & ProtoDUNE Validation\\
+        ~{ for s in specs }~
+
+    \rowcolor{dunetablecolor}
+ID:  ~{{ specs[0].category }}~ ~{{ s.number }}~   & Name: ~{{ s.title }}~  & Spec:  ~{{ s.requirement }}~ \\
     \hline
-    ~{ for s in specs }~
-    \label{spectable:~{{ s.label }}~} & ~{{ s.field }}~\  & ~{{ s.title }}~ & ~{{ s.requirement }}~ & ~{{ s.explanation }}~ & ~{{s.validation.protodune}}~ \\ \hline
-    ~{ endfor }~
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ ~{{ s.explanation }}~ } \\
+    \hline
+ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ ~{{s.validation.protodune}}~ } \\
+    \hline
+Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ ~{{s.validation.simulation}}~ } \\
+        \hline
+   ~{ endfor }~
+
+ 
   \end{tabular}
   \label{tab:spectable:~{{ specs[0].category }}~}
 \end{table}
 
 
-Here I reference the Specification~\ref{spectable:gap-between-apas} in Table~\ref{tab:spectable:DSS} which is in the same section.
-
-\section{Another section}
-
-Here's some other table.
-
-\begin{table}[htp]
-  \caption{Blah}
-  \centering
-  \begin{tabular}{|c|}
-    \hline
-    \label{row:cool} DUNE is cool \\
-    \hline
-  \end{tabular}
-  \label{tab:cool}
-\end{table}
-
-And here it is referenced as Table~\ref{tab:cool}.  
+And here it is referenced as Table~\ref{tab:spectable:~{{ specs[0].category }}~}.  
 I can still reference a row in the previous table,
-Table~\ref{tab:spectable:DSS}
-row~\ref{spectable:drift-field-uniformity}.
+Table~\ref{tab:spectable:DSS} (not sure how you'd reference a row other than to say, e.g., ``DSS 2.''
 
 \end{document}

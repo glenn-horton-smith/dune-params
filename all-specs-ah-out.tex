@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage[top=0.5in, bottom=2.75cm,right=2cm, left=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tabulary}
+\usepackage[table]{xcolor}
+\RequirePackage{booktabs}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\usepackage{etoolbox}
+\newcounter{rowcntr}[table]
+\renewcommand{\therowcntr}{\thetable.\arabic{rowcntr}}
+% A new columntype to apply automatic stepping
+\newcolumntype{N}{>{\refstepcounter{rowcntr}\therowcntr}c}
+% Reset the rowcntr counter at each new tabular
+\AtBeginEnvironment{tabular}{\setcounter{rowcntr}{0}}
+
+\definecolor{dunetablecolor}{RGB}{125,174,211} % matches lighter blue color from Diana's scheme 
+
+
+\begin{document}
+
+\section{The main table}
+
+This table would enumerate every spec across all subsystem ``tabs''.
+
+
+\begin{table}[htp]
+  \caption{Specification for DSS}
+  \centering
+  \begin{tabular}{ |l|p{0.45\textwidth}|p{0.25\textwidth}| }
+    \hline
+        
+
+    \rowcolor{dunetablecolor}
+ID:  DSS 1   & Name: Gap width between adjacent APAs  & Spec:  $<$\SI{20}{\milli\meter} \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Some gap is necessary to allow for detector shrinkage. Installation of electron diverters can mitigate effects of small gaps on reconstruction. } \\
+    \hline
+ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Example: "Simulations of 10-50 mm gaps showed slight and gradual drop in efficiency over 20 mm." } \\
+    \hline
+Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Current conceptual design has 17mm gaps between each grouping of three APAs } \\
+        \hline
+   
+
+    \rowcolor{dunetablecolor}
+ID:  DSS 2   & Name: Drift field uniformity throughout volume  & Spec:  $<1$\%  \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Inhomogeneities in the field will degrade reconstruction performance. Misalignments of TPC components could introduce drift field non-uniformities beyond those specified in the HVS requirements. } \\
+    \hline
+ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Example: "Simulations of misalignments of $<$1\% do not significantly affect reconstruction." } \\
+    \hline
+Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ DSS should provide support such that the APA, CPA and FC can maintain rectangular parallelepiped under LAr conditions. Specifically the rails should remain parallel to each other at a fixed distance throughout the detector volume } \\
+        \hline
+   
+
+    \rowcolor{dunetablecolor}
+ID:  DSS 3   & Name: Anne's test  & Spec:  $<19$\%  \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Inhomogeneities in the space-time continuum can affect our brains. } \\
+    \hline
+ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Example: "Simulations of brains are wacky, too." } \\
+    \hline
+Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ DSS should provide support such that the APA, CPA and FC can maintain rectangular parallelepiped under LAr conditions. Specifically the rails should remain parallel to each other at a fixed distance throughout the detector volume } \\
+        \hline
+   
+
+ 
+  \end{tabular}
+  \label{tab:spectable:DSS}
+\end{table}
+
+
+And here it is referenced as Table~\ref{tab:spectable:DSS}.  
+I can still reference a row in the previous table,
+Table~\ref{tab:spectable:DSS} (not sure how you'd reference a row other than to say, e.g., ``DSS 2.''
+
+\end{document}
