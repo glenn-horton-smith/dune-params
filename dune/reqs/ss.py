@@ -8,8 +8,8 @@ Item,Type,System,Quantity/Parameter,Requirement,Goal,Explanation,Comments,Notes,
 from . import data
 from dune import latex
 
-# A B C D E F G H I J  K  L  M  N  O  P
-# 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 
+# A B C D E F G H I J  K  L  M  N  O  P  Q  R  S T  U  V
+# 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
 
 def load_row(cat, row):
     '''
@@ -22,7 +22,7 @@ def load_row(cat, row):
 
     req = row[9].value
 
-    validation = dict(protodune=row[15].value, simulation=row[16].value)
+    validation = dict(protodune=row[14].value, simulation=row[15].value)
 
     return data.Spec(
         category = cat,
