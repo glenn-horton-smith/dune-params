@@ -24,6 +24,8 @@ def load_row(cat, row):
 
     validation = dict(protodune=row[14].value, simulation=row[15].value)
 
+    print('\t"%s": "%s"'%(cat, qp))
+
     return data.Spec(
         category = cat,
         label = qp,
@@ -41,8 +43,11 @@ def load_row(cat, row):
 
 def load_sheet(sheet, required_columns=22):
     ret = list()
-    sheet.name
-    for row in list(sheet.get_rows())[2:]:
+    rows = list(sheet.get_rows())
+    row_offset=2
+    print ('loading sheet: "%s" with %d rows' %
+           (sheet.name, len(rows)-row_offset))
+    for row in rows[row_offset:]:
         if not row:
             continue
         if required_columns != len(row):
@@ -56,5 +61,5 @@ def load_sheet(sheet, required_columns=22):
 def load_book(book):
     ret = list()
     for sheet in book.sheets():
-        ret += load_sheet(sheet)
+        ret.append(load_sheet(sheet))
     return ret
