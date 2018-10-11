@@ -49,7 +49,7 @@ Each table corresponds to the subsystem ``tab'' in the spreadsheet.
     \hline
     ~{ for s in specgroup }~
     \rowcolor{dunetablecolor}
-    ID: \newtag{~{{ s.category }}~-~{{ s.number }}~}{ spec:~{{ s.label }}~ } (~{{ s.label }}~ )
+    \newtag{~{{ s.category }}~-~{{ s.number }}~}{ spec:~{{ s.label }}~ } (~{{ s.label }}~ )
     & Name: ~{{ s.title }}~  & Spec:  ~{{ s.requirement }}~ \\
     \hline
     Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ ~{{ s.explanation }}~ } \\

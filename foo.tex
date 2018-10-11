@@ -5,45 +5,205 @@
 \usepackage{textcomp}
 \usepackage{siunitx}
 \usepackage{array}
+\usepackage{tabularx}
+\usepackage{tabulary}
+\usepackage[table]{xcolor}
+\RequirePackage{booktabs}
+
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
 \usepackage{etoolbox}
-\newcounter{rowcntr}[table]
-\renewcommand{\therowcntr}{\thetable.\arabic{rowcntr}}
-% A new columntype to apply automatic stepping
-\newcolumntype{N}{>{\refstepcounter{rowcntr}\therowcntr}c}
-% Reset the rowcntr counter at each new tabular
-\AtBeginEnvironment{tabular}{\setcounter{rowcntr}{0}}
+%%\newcounter{rowcntr}[table]
+%%\renewcommand{\therowcntr}{\thetable.\arabic{rowcntr}}
+%%\newcolumntype{N}{>{\refstepcounter{rowcntr}\therowcntr}c}
+%%\AtBeginEnvironment{tabular}{\setcounter{rowcntr}{0}}
+%%\newcommand\speclabel[1]{\refstepcounter{rowcntr}\label{spec:#1}}
+
+\makeatletter
+\newcommand\newtag[2]{#1\def\@currentlabel{#1}\label{#2}}
+\makeatother
+
+\definecolor{dunetablecolor}{RGB}{125,174,211} % matches lighter blue color from Diana's scheme 
+
+
 
 
 \begin{document}
 
-\section{The main table}
+\section{The Category Specifications}
 
-This table would enumerate very spec across all subsystem ``tabs''.
+These tables contain every spec in a given subsystem. 
+Each table corresponds to the subsystem ``tab'' in the spreadsheet.
+
+
+
+\subsection{DSS}
 
 \begin{table}[htp]
   \caption{Specification for DSS}
   \centering
-  \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
-    \hline
-    \multicolumn{1}{|c|}{ID} & Field  & Title & Spec & Rationale & ProtoDUNE Validation\\
+%  \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
+  \begin{tabular}{|p{0.3\textwidth}|p{0.45\textwidth}|p{0.25\textwidth}| }
     \hline
     
-    \label{spectable:gap-between-apas} & Science\  & Gap width between adjacent APAs & $<$\SI{20}{\milli\meter} & Some gap is necessary to allow for detector shrinkage. Installation of electron diverters can mitigate effects of small gaps on reconstruction. & Example: "Simulations of 10-50 mm gaps showed slight and gradual drop in efficiency over 20 mm." \\ \hline
+    \rowcolor{dunetablecolor}
+    \newtag{DSS-1}{ spec:gap-between-apas } (gap-between-apas )
+    & Name: Gap width between adjacent APAs  & Spec:  $<$\SI{20}{\milli\meter} \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Some gap is necessary to allow for detector shrinkage. Installation of electron diverters can mitigate effects of small gaps on reconstruction. } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Example: "Simulations of 10-50 mm gaps showed slight and gradual drop in efficiency over 20 mm." } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Current conceptual design has 17mm gaps between each grouping of three APAs } \\
+    \hline
     
-    \label{spectable:drift-field-uniformity} & Science\  & Drift field uniformity throughout volume & $<1$\%  & Inhomogeneities in the field will degrade reconstruction performance. Misalignments of TPC components could introduce drift field non-uniformities beyond those specified in the HVS requirements. & Example: "Simulations of misalignments of $<$1\% do not significantly affect reconstruction." \\ \hline
+    \rowcolor{dunetablecolor}
+    \newtag{DSS-2}{ spec:drift-field-uniformity } (drift-field-uniformity )
+    & Name: Drift field uniformity throughout volume  & Spec:  $<1$\%  \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Inhomogeneities in the field will degrade reconstruction performance. Misalignments of TPC components could introduce drift field non-uniformities beyond those specified in the HVS requirements. } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Example: "Simulations of misalignments of $<$1\% do not significantly affect reconstruction." } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ DSS should provide support such that the APA, CPA and FC can maintain rectangular parallelepiped under LAr conditions. Specifically the rails should remain parallel to each other at a fixed distance throughout the detector volume } \\
+    \hline
+    
+    \rowcolor{dunetablecolor}
+    \newtag{DSS-3}{ spec:anne-test } (anne-test )
+    & Name: Anne's test  & Spec:  $<19$\%  \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Inhomogeneities in the space-time continuum can affect our brains. } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Example: "Simulations of brains are wacky, too." } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ DSS should provide support such that the APA, CPA and FC can maintain rectangular parallelepiped under LAr conditions. Specifically the rails should remain parallel to each other at a fixed distance throughout the detector volume } \\
+    \hline
     
   \end{tabular}
   \label{tab:spectable:DSS}
 \end{table}
 
 
-Here I reference the Specification~\ref{spectable:gap-between-apas} in Table~\ref{tab:spectable:DSS} which is in the same section.
+
+\subsection{APA}
+
+\begin{table}[htp]
+  \caption{Specification for APA}
+  \centering
+%  \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
+  \begin{tabular}{|p{0.3\textwidth}|p{0.45\textwidth}|p{0.25\textwidth}| }
+    \hline
+    
+    \rowcolor{dunetablecolor}
+    \newtag{APA-1}{ spec:apa1 } (apa1 )
+    & Name: APA test 1  & Spec:  \SI{5}{\milli\meter} \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Five is a good number } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Simulations will tell us that five is a good number } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Current conceptual design has 17mm gaps between each grouping of three APAs } \\
+    \hline
+    
+    \rowcolor{dunetablecolor}
+    \newtag{APA-2}{ spec:apa2 } (apa2 )
+    & Name: APA test 2  & Spec:  \si{64} bits \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Sixty-four is a good number for apas } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Simulations will tell us that sixty-four is a good number for apas } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Current conceptual design has 17mm gaps between each grouping of three APAs } \\
+    \hline
+    
+  \end{tabular}
+  \label{tab:spectable:APA}
+\end{table}
+
+
+
+\subsection{SP TPC Electronics}
+
+\begin{table}[htp]
+  \caption{Specification for SP TPC Electronics}
+  \centering
+%  \begin{tabular}{|N|C{1cm}|C{3cm}|L{1cm}|L{4cm}|L{4cm}|}
+  \begin{tabular}{|p{0.3\textwidth}|p{0.45\textwidth}|p{0.25\textwidth}| }
+    \hline
+    
+    \rowcolor{dunetablecolor}
+    \newtag{SP TPC Electronics-1}{ spec:elec-test1 } (elec-test1 )
+    & Name: SP TPC Elec test 1  & Spec:  \SI{6}{\volt} \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Six is a good number } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Simulations will tell us that six is a good number } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Current conceptual design has 17mm gaps between each grouping of three APAs } \\
+    \hline
+    
+    \rowcolor{dunetablecolor}
+    \newtag{SP TPC Electronics-2}{ spec:elec-test2 } (elec-test2 )
+    & Name: SP TPC Elec test 2  & Spec:  \si{64} bits \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ Sixty-four is a good number } \\
+    \hline
+    ProtoDUNE Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Simulations will tell us that sixty-four is a good number } \\
+    \hline
+    Simulation Validation & \multicolumn{2}{p{0.7\textwidth}|}{ Current conceptual design has 17mm gaps between each grouping of three APAs } \\
+    \hline
+    
+  \end{tabular}
+  \label{tab:spectable:SP TPC Electronics}
+\end{table}
+
+
+
+\section{Full of references}
+
+%% cycle through all specs and reference them.
+
+\subsection{DSS References}
+
+\begin{description}
+  
+  \item[ DSS 1 ] Gap width between adjacent APAs~\ref{ spec:gap-between-apas }
+  
+  \item[ DSS 2 ] Drift field uniformity throughout volume~\ref{ spec:drift-field-uniformity }
+  
+  \item[ DSS 3 ] Anne's test~\ref{ spec:anne-test }
+  
+\end{description}
+
+\subsection{APA References}
+
+\begin{description}
+  
+  \item[ APA 1 ] APA test 1~\ref{ spec:apa1 }
+  
+  \item[ APA 2 ] APA test 2~\ref{ spec:apa2 }
+  
+\end{description}
+
+\subsection{SP TPC Electronics References}
+
+\begin{description}
+  
+  \item[ SP TPC Electronics 1 ] SP TPC Elec test 1~\ref{ spec:elec-test1 }
+  
+  \item[ SP TPC Electronics 2 ] SP TPC Elec test 2~\ref{ spec:elec-test2 }
+  
+\end{description}
+
+
 
 \section{Another section}
+
+
+Here I reference the Specification~\ref{spec:gap-between-apas} in Table~\ref{tab:spectable:DSS} which is in the same section.
+
 
 Here's some other table.
 
@@ -61,6 +221,6 @@ Here's some other table.
 And here it is referenced as Table~\ref{tab:cool}.  
 I can still reference a row in the previous table,
 Table~\ref{tab:spectable:DSS}
-row~\ref{spectable:drift-field-uniformity}.
+row~\ref{spec:drift-field-uniformity}.
 
 \end{document}
