@@ -18,7 +18,10 @@ def render(dat, template):
 
     '''
 
-    byname = {d.category+d.label:d for d in dat}
+    byname = dict()
+    for specgroup in dat:
+        for spec in specgroup:
+            byname[spec.category+spec.label] = spec
 
 
     env = Environment(loader = FileSystemLoader(osp.dirname(template)),
