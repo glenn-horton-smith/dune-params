@@ -11,3 +11,4 @@ dist
 venv*
 auto
 latexmk-out
+foo.tex
