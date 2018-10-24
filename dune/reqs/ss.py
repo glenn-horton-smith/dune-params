@@ -22,7 +22,8 @@ def load_row(cat, row):
 
     req = row[9].value
 
-    validation = dict(protodune=row[14].value, simulation=row[15].value)
+    '''validation = dict(protodune=row[14].value, simulation=row[15].value)
+    '''
 
     print('\t"%s": "%s"'%(cat, qp))
 
@@ -38,10 +39,10 @@ def load_row(cat, row):
         explanation = row[11].value,
         comment = "", # row[7].value,
         notes = "", # row[8].value,
-        validation = validation)
+        validation = row[14].value)
 
 
-def load_sheet(sheet, required_columns=22):
+def load_sheet(sheet, required_columns=21):
     ret = list()
     rows = list(sheet.get_rows())
     row_offset=2
