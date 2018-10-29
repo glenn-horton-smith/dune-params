@@ -92,14 +92,29 @@ def getdocdb(overwrite, extension, archive, url_pattern, username, password, ver
 
     if url.startswith("http://"): # anon
         res = requests.get(url);
+        if not res or not res.ok:
+            click.echo("Failed to access anonymous URL %s" % url, err=True)
+            sys.exit(-1)
     else:
         from requests.auth import HTTPBasicAuth
         res = requests.get(url, auth=HTTPBasicAuth(username, password))
+        if not res or not res.ok:
+            click.echo("Failed to access authenticated URL %s" % url, err=True)
+            sys.exit(-1)
 
     #open("foo.html","w").write(res.text);
 
     soup = bs4.BeautifulSoup(res.text, 'html.parser')
-    fileurls = [x.a["href"] for x in soup.find(id='Files').findAll('li')]
+
+    soup_files = soup.find(id='Files')
+    if not soup_files:
+        click.echo("Failed to access files for docid %s" % docid, err=True)
+        sys.exit(-1)
+
+    fileurls = [x.a["href"] for x in soup_files.findAll('li')]
+    if not fileurls:
+        click.echo("Found no files in docid %s" % docid, err = True)
+        sys.exit(-1)
 
     ident = soup.find(id='BasicDocInfo').findAll('dd')[0].contents[0]
     #print ('found DocDB ident "%s"' % ident)
