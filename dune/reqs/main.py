@@ -48,6 +48,121 @@ def render(template, render, output, xlsfile):
 
 
 
+@cli.command("getdocdb")
+@click.option('--overwrite/--no-overwrite', default=True,
+              help='Clobber existing files or not')
+@click.option('-e','--extension', default="",
+              help='Limit which files to get by matching extension')
+@click.option('-a','--archive', default="",
+              help='Save files to an archive instead.  If set, give desired extension')
+@click.option('-u','--url-pattern',
+              default="",
+              help='The URL pattern for a DocDB entry')
+@click.option('-U','--username', default="dune",
+              help="The docdb user name with which to aunthenticate")
+@click.option('-P','--password', default="",
+              help="The docdb password with which to aunthenticate")
+@click.option('-V','--version', default="",
+              help="A specific version of the DocDB entry")
+@click.argument('docid', required=True)
+def getdocdb(overwrite, extension, archive, url_pattern, username, password, version, docid):
+    '''
+    Get contents of a DocDB entry.
+
+    If URL is https:// scheme user/password is required.  http:// is
+    assumed to allow anonymous access.
+    '''
+    url_default_unpw = "https://docs.dunescience.org/cgi-bin/private/ShowDocument?docid={docid}&version={version}"
+    url_default_anon = "http://docs.dunescience.org/cgi-bin/ShowDocument?docid={docid}&version={version}"
+    if not url_pattern:
+        if username and password:
+            url_pattern = url_default_unpw
+        else:
+            url_pattern = url_default_anon
+
+
+    url = url_pattern.format(**locals())
+    #print (url)
+
+    import os
+    import sys
+    import requests
+    import bs4
+    from urllib.parse import urlparse, parse_qs
+
+    if url.startswith("http://"): # anon
+        res = requests.get(url);
+    else:
+        from requests.auth import HTTPBasicAuth
+        res = requests.get(url, auth=HTTPBasicAuth(username, password))
+
+    #open("foo.html","w").write(res.text);
+
+    soup = bs4.BeautifulSoup(res.text, 'html.parser')
+    fileurls = [x.a["href"] for x in soup.find(id='Files').findAll('li')]
+
+    ident = soup.find(id='BasicDocInfo').findAll('dd')[0].contents[0]
+    #print ('found DocDB ident "%s"' % ident)
+
+    # FIXME: should break this state garbage into separate objects and
+    # put out to a module.
+    if archive:
+        afile = ident + '.' + archive
+        if not overwrite and os.path.exists(afile):
+            sys.exit(-1)
+
+        if 'tar' in archive:
+            topts = ['w']
+            if 'gz' in archive:
+                topts.append('gz')
+            topts = ':'.join(topts)
+            
+            import io, tarfile
+            tf = tarfile.open(afile, topts)
+            #print ("writing %s" % afile)
+            click.echo(afile)
+            def save_to_tar(fname, content):
+                #print ("\tadding: %s" % fname)
+                info = tarfile.TarInfo(fname)
+                info.size = len(content)
+                tf.addfile(info, io.BytesIO(content))
+            saveit = save_to_tar
+        else:
+            saveit = None
+    else:
+        def save_as_file(fname, content):
+            #print ("saving %s" % fname)
+            click.echo(fname)
+            with open(fname, 'wb') as fp:
+                fp.write(content)
+        saveit = save_as_file
+            
+
+    for fileurl in fileurls:
+        filename = parse_qs(urlparse(fileurl).query)['filename']
+        if len(filename) < 1:
+            click.echo("failed to find filename in %s" % fileurl)
+            continue
+        filename = filename[0]
+
+        if extension and not filename.endswith(extension):
+            #click.echo("skipping file %s" % filename)
+            continue
+
+        if not overwrite and os.path.exists(filename):
+            sys.exit(-1)
+
+        if fileurl.startswith("http://"):
+            res = requests.get(fileurl)
+        else:
+            res = requests.get(fileurl, auth=HTTPBasicAuth(username, password))
+
+        saveit(filename, res.content)
+    
+
+        
+        
+
 def main():
     cli(obj={})
 

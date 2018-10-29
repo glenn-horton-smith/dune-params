@@ -12,3 +12,8 @@ venv*
 auto
 latexmk-out
 foo.tex
+*.xlsx
+*.png
+*.tar
+*.tar.gz
+*.xltx

@@ -2,3 +2,5 @@ pint
 xlrd
 jinja2
 click
+requests
+bs4
