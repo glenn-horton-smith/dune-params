@@ -51,6 +51,8 @@ def render(template, render, output, xlsfile):
 @cli.command("getdocdb")
 @click.option('--overwrite/--no-overwrite', default=True,
               help='Clobber existing files or not')
+@click.option('-t','--tag-file', default="",
+              help='If given, write the document id string to given file iff download successful')
 @click.option('-e','--extension', default="",
               help='Limit which files to get by matching extension')
 @click.option('-a','--archive', default="",
@@ -65,7 +67,7 @@ def render(template, render, output, xlsfile):
 @click.option('-V','--version', default="",
               help="A specific version of the DocDB entry")
 @click.argument('docid', required=True)
-def getdocdb(overwrite, extension, archive, url_pattern, username, password, version, docid):
+def getdocdb(overwrite, tag_file, extension, archive, url_pattern, username, password, version, docid):
     '''
     Get contents of a DocDB entry.
 
@@ -175,7 +177,9 @@ def getdocdb(overwrite, extension, archive, url_pattern, username, password, ver
         saveit(filename, res.content)
     
 
-        
+    if tag_file:
+        with open(tag_file, 'w') as fp:
+            fp.write(ident);
         
 
 def main():
