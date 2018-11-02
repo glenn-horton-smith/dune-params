@@ -37,7 +37,7 @@ def load_row(cat, row):
         requirement = req,
         goal = row[10].value,          # maybe make this an enum?
         explanation = row[11].value,
-        comment = "", # row[7].value,
+        comment = row[7].value,
         notes = "", # row[8].value,
         validation = row[14].value)
 
