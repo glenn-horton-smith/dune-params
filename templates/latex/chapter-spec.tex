@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage[top=0.5in, bottom=2.75cm,right=2cm, left=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{siunitx}
+\usepackage{array}
+\usepackage{xspace}
+\usepackage{tabularx}
+\usepackage{tabulary}
+\usepackage[table]{xcolor}
+\RequirePackage{booktabs}
+\RequirePackage{todonotes}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\presetkeys{todonotes}{fancyline}{}
+\newcommand{\fixme}[1]{\todo[inline]{#1}}
+
+
+\usepackage{etoolbox}
+%%\newcounter{rowcntr}[table]
+%%\renewcommand{\therowcntr}{\thetable.\arabic{rowcntr}}
+%%\newcolumntype{N}{>{\refstepcounter{rowcntr}\therowcntr}c}
+%%\AtBeginEnvironment{tabular}{\setcounter{rowcntr}{0}}
+%%\newcommand\speclabel[1]{\refstepcounter{rowcntr}\label{spec:#1}}
+
+\makeatletter
+\newcommand\newtag[2]{#1\def\@currentlabel{#1}\label{#2}}
+\makeatother
+
+\definecolor{dunetablecolor}{RGB}{125,174,211} % matches lighter blue color from Diana's scheme 
+
+\input{defs}
+\input{glossary}
+
+\begin{document}
+
+\section{Demo For Sub-system ~{{ code }}~  }
+
+Subsys Codes: 
+\begin{itemize}
+  ~{ for c in codes -}~
+\item ~{{ c }}~
+  ~{ endfor }~
+\end{itemize}
+
+\begin{table}[htp]
+  \caption{Specification for ~{{ code }}~}
+  \centering
+  \begin{tabular}{|p{0.2\textwidth}|p{0.45\textwidth}|p{0.25\textwidth}| }
+    \hline
+    ~{ for s in sstop + subsys }~
+    \rowcolor{dunetablecolor}
+    \newtag{~{{ s.gid }}~}{ spec:~{{ s.label }}~ } \fixme{~{{ s.label }}~}
+    & Name: ~{{ s.text }}~  & Spec:  ~{{ s.vlatex }}~ \\
+    \hline
+    Rationale &  \multicolumn{2}{p{0.7\textwidth}|}{ ~{{ s.rationale }}~ } \\
+    \hline
+    Validation & \multicolumn{2}{p{0.7\textwidth}|}{ ~{{s.validation}}~ } \\
+    \hline
+    ~{ endfor }~
+  \end{tabular}
+  \label{tab:spectable:~{{ code }}~}
+\end{table}
+
+\end{document}
