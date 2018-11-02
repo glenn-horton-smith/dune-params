@@ -37,7 +37,8 @@ def render(template, render, output, xlsfile):
     from . import ss
     book = xlrd.open_workbook(xlsfile)
     dat = ss.load_book(book) # fixme make this option to merge with dune-params
-    
+    dat = ss.massage(dat);   # fixme: make this an option?
+
     rendmodname, rendfuncname = render.rsplit('.',1)
     rendmod = importlib.import_module(rendmodname)
     rendfunc = getattr(rendmod, rendfuncname)

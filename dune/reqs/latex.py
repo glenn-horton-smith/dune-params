@@ -18,12 +18,6 @@ def render(dat, template):
 
     '''
 
-    byname = dict()
-    for specgroup in dat:
-        for spec in specgroup:
-            byname[spec.category+spec.label] = spec
-
-
     env = Environment(loader = FileSystemLoader(osp.dirname(template)),
 	              comment_start_string = '\#{',
 	              comment_end_string = '}',
@@ -33,4 +27,4 @@ def render(dat, template):
                       variable_end_string='}}~')
     tmpl = env.get_template(osp.basename(template))
 
-    return tmpl.render(specs=dat, byname=byname)
+    return tmpl.render(**dat)
