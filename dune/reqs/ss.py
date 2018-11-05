@@ -84,10 +84,8 @@ def load_sheets(book):
 
     chapter = [k for k in bynative.keys() if k in codes]
     if len(chapter) != 1:
-        print(chapter)
-        print (codes)
-        print (bynative.keys())
-        assert len(chapter)==1
+        #print ("failed to find subsys code in sheet tab names, using default")
+        chapter = ["Your chapter (use code)"]
         
     chapter = chapter[0]
     chapter_sheet = bynative[chapter]

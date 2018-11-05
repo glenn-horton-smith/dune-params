@@ -46,6 +46,45 @@ def render(template, render, output, xlsfile):
     text = rendfunc(dat, template)
     open(output,'w').write(text)
 
+@cli.command("render-subsys-one")
+@click.option('-t','--template', required=True, type=click.Path(exists=True),
+              help='Set the template file to use to render the parameters')
+@click.option('-r','--render', required=False, default='dune.reqs.latex.render',
+              help='Set the rendering module.')
+@click.option('-o','--output', required=True, type=str,
+              help='Set the output file to generate per row, should contain format codes')
+@click.option('-c','--collection', default="subsys",
+              help='Select which collection to iterate')
+@click.argument('xlsfile', required=True)
+def render_subsys_one(template, render, output, collection, xlsfile):
+    '''
+    Render the specs using the template with filtering.
+
+    In providing the output file pattern, format codes should be used
+    to allow unique per-item output files.  The same data structure
+    passed to the template is also passed to format the output file
+    name.  It includes {collection} (set by -c option) and the
+    {collection_key} and {collection_value} which represents the
+    current iteration item.
+    '''
+    import importlib
+    import xlrd
+    from . import ss
+    book = xlrd.open_workbook(xlsfile)
+    dat = ss.load_book(book) # fixme make this option to merge with dune-params
+    dat = ss.massage(dat);   # fixme: make this an option?
+
+    rendmodname, rendfuncname = render.rsplit('.',1)
+    rendmod = importlib.import_module(rendmodname)
+    rendfunc = getattr(rendmod, rendfuncname)
+    
+    toiter = dat[collection]
+    for key,value in toiter.items():
+        kdat = dict(dat, collection=collection, collection_key=key, collection_value=value)
+        text = rendfunc(kdat, template)
+        filename = output.format(**kdat)
+        open(filename,'w').write(text)
+
 
 
 

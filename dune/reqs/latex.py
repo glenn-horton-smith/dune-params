@@ -8,14 +8,8 @@ from jinja2 import Environment, FileSystemLoader
 from collections import namedtuple
 
 def render(dat, template):
-    '''Apply the ParamSet <ps> to the template_text and return the rendered LaTeX text.
-
-    The template has available the original ParamSet as "params" and
-    an additional dictionary keyed by variable name called latex, the
-    values of which has .value and .unit with forms suitable for the
-    args to \SI{}{}, .sicmd for a siunitx command and defname for a
-    name to use as a macro (all '-' and '_' removed).
-
+    '''Apply the dat data structure to the template and return LaTeX
+    text.
     '''
 
     env = Environment(loader = FileSystemLoader(osp.dirname(template)),
@@ -28,3 +22,29 @@ def render(dat, template):
     tmpl = env.get_template(osp.basename(template))
 
     return tmpl.render(**dat)
+
+def render_multi(dat, template, multi):
+    '''Like render() but output multiple files based on filemap.
+
+    The "multi" associates a key with a dictionary.  For each item,
+    the dictionary is merged with the dat structure.  The return value
+    is dictionary with the same keys as "multi" and with each value
+    the corresponding LaTeX content.
+    '''
+
+    env = Environment(loader = FileSystemLoader(osp.dirname(template)),
+	              comment_start_string = '\#{',
+	              comment_end_string = '}',
+                      block_start_string='~{',
+                      block_end_string='}~',
+                      variable_start_string='~{{',
+                      variable_end_string='}}~')
+    tmpl = env.get_template(osp.basename(template))
+
+    ret = dict();
+    for key,extra in multi.items():
+        mdat = dict(dat, **extra)
+        text = tmpl.render(**mdat)
+        ret[key] = text
+    return ret
+        
