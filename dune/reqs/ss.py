@@ -78,6 +78,9 @@ def load_sheets(book, chapter_code):
     Return a dictionary mapping a canonical name to a sheet
 
     "chapter" and "subsys" are synonyms in the taxonomy.
+
+    If chapter code is "TOP" then take not from the subsys tab but
+    from the "List of top-level requirements" tab.
     '''
     bynative = {s.name:s for s in book.sheets()}
     code_tab = [k for k in bynative.keys() if "chapter codes" in k.lower()][0]
@@ -88,8 +91,10 @@ def load_sheets(book, chapter_code):
     if len(ss_tabname) != 1:
         #print ("failed to find subsys code in sheet tab names, using default")
         ss_tabname = ["Your chapter (use code)"]
-        
     ss_tabname = ss_tabname[0]
+    if chapter_code == "TOP":
+        ss_tabname = "List of top-level requirements"
+
     chapter_sheet = bynative[ss_tabname]
 
     toplevel_tab = [k for k in bynative.keys() if "top-level requirements" in k.lower()][0]
