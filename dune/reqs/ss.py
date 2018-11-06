@@ -73,22 +73,24 @@ def rows(sheet, first_row=0):
     ret = [r for r in list(sheet.get_rows())[first_row:] if r[0].value]
     return ret;
 
-def load_sheets(book):
+def load_sheets(book, chapter_code):
     '''
     Return a dictionary mapping a canonical name to a sheet
+
+    "chapter" and "subsys" are synonyms in the taxonomy.
     '''
     bynative = {s.name:s for s in book.sheets()}
     code_tab = [k for k in bynative.keys() if "chapter codes" in k.lower()][0]
     code_sheet = bynative[code_tab]
     codes = [r[0].value for r in rows(code_sheet,2) if r[0]]
 
-    chapter = [k for k in bynative.keys() if k in codes]
-    if len(chapter) != 1:
+    ss_tabname = [k for k in bynative.keys() if k in codes]
+    if len(ss_tabname) != 1:
         #print ("failed to find subsys code in sheet tab names, using default")
-        chapter = ["Your chapter (use code)"]
+        ss_tabname = ["Your chapter (use code)"]
         
-    chapter = chapter[0]
-    chapter_sheet = bynative[chapter]
+    ss_tabname = ss_tabname[0]
+    chapter_sheet = bynative[ss_tabname]
 
     toplevel_tab = [k for k in bynative.keys() if "top-level requirements" in k.lower()][0]
     toplevel_sheet = bynative[toplevel_tab];
@@ -97,7 +99,7 @@ def load_sheets(book):
     selected_sheet = bynative[selected_tab]
 
     return dict(toplevel=toplevel_sheet,
-                code=chapter,
+                code=chapter_code,
                 codes=codes,
                 subsys=chapter_sheet,
                 selected=selected_sheet)
@@ -106,11 +108,11 @@ all_schema = dict(toplevel = (2, requirements_schema),
                   subsys = (2, requirements_schema),
                   selected = (1, selected_schema))
 
-def load_book(book):
+def load_book(book, chapter_code):
     '''
     Parse the book into a data structure
     '''
-    sheets = load_sheets(book)
+    sheets = load_sheets(book, chapter_code)
     ret = dict()
     for name in 'toplevel subsys selected'.split():
         skip, schema = all_schema[name]

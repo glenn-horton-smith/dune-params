@@ -1,3 +1,4 @@
+import os
 import click
 
 @click.group()
@@ -46,45 +47,70 @@ def render(template, render, output, xlsfile):
     text = rendfunc(dat, template)
     open(output,'w').write(text)
 
-@cli.command("render-subsys-one")
+@cli.command("render-one")
 @click.option('-t','--template', required=True, type=click.Path(exists=True),
               help='Set the template file to use to render the parameters')
+@click.option('-T','--all-template', required=False, type=click.Path(exists=True),
+              help='Set the template to roll-up all.')
 @click.option('-r','--render', required=False, default='dune.reqs.latex.render',
               help='Set the rendering module.')
 @click.option('-o','--output', required=True, type=str,
               help='Set the output file to generate per row, should contain format codes')
+@click.option('-O','--all-output', required=False, type=str,
+              help='Set the output file for a roll-up all output, may contain format codes')
 @click.option('-c','--collection', default="subsys",
               help='Select which collection to iterate')
+@click.option('-C','--chapter-code', type=str, required=True,
+              help='Select which collection to iterate')
 @click.argument('xlsfile', required=True)
-def render_subsys_one(template, render, output, collection, xlsfile):
+def render_one(template, all_template, render, output, all_output, collection, chapter_code, xlsfile):
     '''
-    Render the specs using the template with filtering.
+    Render one spec at a time.
 
     In providing the output file pattern, format codes should be used
     to allow unique per-item output files.  The same data structure
     passed to the template is also passed to format the output file
-    name.  It includes {collection} (set by -c option) and the
-    {collection_key} and {collection_value} which represents the
-    current iteration item.
+    name.  It includes {collection} (set by -c option) and the {label}
+    and {ssid} of each current iteration item.
+
+    The "roll-up all" options are optional and if given will produce a
+    single output using another template which is given the
+    "collection" name and "collection_list" holding the per item
+    dictionaries and ordered by their ssid.
     '''
     import importlib
     import xlrd
     from . import ss
     book = xlrd.open_workbook(xlsfile)
-    dat = ss.load_book(book) # fixme make this option to merge with dune-params
-    dat = ss.massage(dat);   # fixme: make this an option?
+    dat = ss.load_book(book, chapter_code)
+    dat = ss.massage(dat);
 
     rendmodname, rendfuncname = render.rsplit('.',1)
     rendmod = importlib.import_module(rendmodname)
     rendfunc = getattr(rendmod, rendfuncname)
     
-    toiter = dat[collection]
-    for key,value in toiter.items():
-        kdat = dict(dat, collection=collection, collection_key=key, collection_value=value)
-        text = rendfunc(kdat, template)
+    # use ssid to sort 
+    idnvlist = [(ss['ssid'], ss['label'], ss) for ss in dat[collection]]
+    idnvlist.sort()
+    collection_list = list()
+    for cssid,clabel,cdata in idnvlist:
+        kdat = dict(dat, collection=collection, ssid=cssid, label=clabel, req=cdata)
         filename = output.format(**kdat)
+        kdat["rel_file"]=filename
+        kdat["one_file"]=os.path.basename(filename)
+        text = rendfunc(kdat, template)
         open(filename,'w').write(text)
+        collection_list.append(kdat)
 
+    doall = all([all_template, all_output])
+    if not doall and any([all_template, all_output]):
+        click.echo("Both -T and -O must be given if either is given")
+    else:
+        kdat = dict(dat, collection=collection, collection_list = collection_list)
+        text = rendfunc(kdat, all_template)
+        filename = all_output.format(**kdat)
+        open(filename, 'w').write(text)
+    
 
 
 
