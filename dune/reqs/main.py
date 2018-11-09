@@ -26,10 +26,12 @@ def dump(xlsfile):
               help='Set the template file to use to render the parameters')
 @click.option('-r','--render', required=False, default='dune.reqs.latex.render',
               help='Set the rendering module.')
+@click.option('-C','--chapter-code', type=str, required=True,
+              help='Select which collection to iterate')
 @click.option('-o','--output', required=True, type=click.Path(writable=True),
               help='Set the output file to generate')
 @click.argument('xlsfile', required=True)
-def render(template, render, output, xlsfile):
+def render(template, render, chapter_code, output, xlsfile):
     '''
     Render the specs using the template with filtering.
     '''
@@ -37,7 +39,7 @@ def render(template, render, output, xlsfile):
     import xlrd
     from . import ss
     book = xlrd.open_workbook(xlsfile)
-    dat = ss.load_book(book) # fixme make this option to merge with dune-params
+    dat = ss.load_book(book, chapter_code)
     dat = ss.massage(dat);   # fixme: make this an option?
 
     rendmodname, rendfuncname = render.rsplit('.',1)
