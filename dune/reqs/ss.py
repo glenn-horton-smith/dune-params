@@ -97,7 +97,7 @@ def load_sheets(book, chapter_code):
 
     chapter_sheet = bynative[ss_tabname]
 
-    toplevel_tab = [k for k in bynative.keys() if "top-level requirements" in k.lower()][0]
+    toplevel_tab = [k for k in bynative.keys() if "list of top-level" in k.lower()][0]
     toplevel_sheet = bynative[toplevel_tab];
 
     selected_tab = [k for k in bynative.keys() if "selected top-level" in k.lower()][0]
