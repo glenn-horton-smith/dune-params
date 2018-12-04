@@ -22,8 +22,8 @@ def render(ps, template):
     aux = dict()
 
     # extend the special data for convenience
-    input_parameters = ps.params.values()
-    LaTeX = namedtuple('LaTeX', 'sicmd defname'.split() + input_parameters[0].__dict__.keys())
+    input_parameters = list(ps.params.values())
+    LaTeX = namedtuple('LaTeX', 'sicmd defname'.split() + list(input_parameters[0].__dict__.keys()))
 
     for p in input_parameters:
 

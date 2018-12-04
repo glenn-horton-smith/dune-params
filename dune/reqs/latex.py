@@ -42,7 +42,7 @@ def render_multi(dat, template, multi):
     tmpl = env.get_template(osp.basename(template))
 
     ret = dict();
-    for key,extra in multi.items():
+    for key,extra in list(multi.items()):
         mdat = dict(dat, **extra)
         text = tmpl.render(**mdat)
         ret[key] = text

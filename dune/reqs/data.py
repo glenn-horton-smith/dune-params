@@ -51,7 +51,7 @@ class Spec(namedtuple("Spec", [
     def latex_dict(self):
         'Return dict with values suitable for use in latex'
         ret = dict()
-        for k,v in self.items():
+        for k,v in list(self.items()):
             if hasattr(v, "latex_dict"):
                 ret[k] = v.latex_dict()
             else:

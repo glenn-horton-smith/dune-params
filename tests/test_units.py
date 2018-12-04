@@ -7,6 +7,6 @@ def test_div():
     y = Q('1.6 millimeter / microsecond')
     z = x/y
     assert z
-    print type(x),type(y),type(z)
-    print z.to('millisecond')
+    print((type(x),type(y),type(z)))
+    print((z.to('millisecond')))
 

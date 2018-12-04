@@ -23,7 +23,7 @@ class Param(object):
             try:
                 value = float(value) # fixme: should add type to spread sheet
             except ValueError:
-                print 'Failed to convert "%s" = "%s" to float' %(variable, value)
+                print(('Failed to convert "%s" = "%s" to float' %(variable, value)))
                 raise
             self.q = Q(value, unit)            
         if not name:
@@ -48,7 +48,7 @@ class ParamSet(object):
         Add a parameter to the set.
         '''
         unit = param.unit
-        if unit and not self.units.has_key(unit):
+        if unit and unit not in self.units:
             raise ValueError('No such unit: "%s"' % unit)
         self.params[param.variable] = param
 
@@ -57,10 +57,10 @@ class ParamSet(object):
         return p.q              # mind them!
 
     def keys(self):
-        return self.params.keys()
+        return list(self.params.keys())
 
     def items(self):
-        return [(k,getattr(k)) for k in self.keys()]
+        return [(k,getattr(k)) for k in list(self.keys())]
 
     def dict(self):
-        return {k:self.params[k] for k in self.keys()}
+        return {k:self.params[k] for k in list(self.keys())}

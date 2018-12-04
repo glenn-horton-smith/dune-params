@@ -19,7 +19,7 @@ def _test_jinja():
                   variable_start_string='~{{', variable_end_string='}}~')
 
     t = env.get_template('dump.tex')
-    print t.render(params=ps.dict(), **ps.dict())
+    print((t.render(params=ps.dict(), **ps.dict())))
 
 def test_dune_params():
     '''
@@ -27,7 +27,7 @@ def test_dune_params():
     '''
     ps = io.load(common.example_xls)
     text = latex.render(ps, osp.join(common.template_dir, 'dump.tex'))
-    print text
+    print(text)
 
 if '__main__' == __name__:
     test_dune_params()

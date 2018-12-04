@@ -4,7 +4,7 @@ Estimate data rates.
 '''
 
 from .data import Param
-from units import Q
+from .units import Q
 
 def filter(ps):
     '''

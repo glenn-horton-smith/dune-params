@@ -50,7 +50,7 @@ def load_row(row, schema):
     Load a row into a data structure following the given schema 
     '''
     ret = dict()
-    for k,f in schema.items():
+    for k,f in list(schema.items()):
         ret[k] = f(row)
     return ret
 
@@ -83,11 +83,11 @@ def load_sheets(book, chapter_code):
     from the "List of top-level requirements" tab.
     '''
     bynative = {s.name:s for s in book.sheets()}
-    code_tab = [k for k in bynative.keys() if "chapter codes" in k.lower()][0]
+    code_tab = [k for k in list(bynative.keys()) if "chapter codes" in k.lower()][0]
     code_sheet = bynative[code_tab]
     codes = [r[0].value for r in rows(code_sheet,2) if r[0]]
 
-    ss_tabname = [k for k in bynative.keys() if k in codes]
+    ss_tabname = [k for k in list(bynative.keys()) if k in codes]
     if len(ss_tabname) != 1:
         #print ("failed to find subsys code in sheet tab names, using default")
         ss_tabname = ["Your chapter (use code)"]
@@ -97,10 +97,10 @@ def load_sheets(book, chapter_code):
 
     chapter_sheet = bynative[ss_tabname]
 
-    toplevel_tab = [k for k in bynative.keys() if "list of top-level" in k.lower()][0]
+    toplevel_tab = [k for k in list(bynative.keys()) if "list of top-level" in k.lower()][0]
     toplevel_sheet = bynative[toplevel_tab];
 
-    selected_tab = [k for k in bynative.keys() if "selected top-level" in k.lower()][0]
+    selected_tab = [k for k in list(bynative.keys()) if "selected top-level" in k.lower()][0]
     selected_sheet = bynative[selected_tab]
 
     return dict(toplevel=toplevel_sheet,
