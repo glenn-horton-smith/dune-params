@@ -186,7 +186,10 @@ def getdocdb(overwrite, tag_file, extension, archive, url_pattern, username, pas
     import sys
     import requests
     import bs4
-    from urllib.parse import urlparse, parse_qs
+    try:
+        from urllib.parse import urlparse, parse_qs
+    except ImportError:         # python2....
+        from urlparse import urlparse, parse_qs
 
     if url.startswith("http://"): # anon
         res = requests.get(url);
