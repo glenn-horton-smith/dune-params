@@ -21,7 +21,7 @@ A
 id
 
 '''
-
+import re
 from . import data
 from dune import latex
 
@@ -73,41 +73,53 @@ def rows(sheet, first_row=0):
     ret = [r for r in list(sheet.get_rows())[first_row:] if r[0].value]
     return ret;
 
-def load_sheets(book, chapter_code):
+def get_matches(patterns, strings):
+    ret = list()
+    for pattern in patterns:
+        for s in strings:
+            if re.search(pattern,s.lower()):
+                ret.append(s)
+    return ret
+
+
+    
+
+def load_sheets(book, chapter_code, top = ("SP-FD","DP-FD")):
     '''
     Return a dictionary mapping a canonical name to a sheet
 
     "chapter" and "subsys" are synonyms in the taxonomy.
 
-    If chapter code is "TOP" then take not from the subsys tab but
-    from the "List of top-level requirements" tab.
+    If chapter code is in the "top" list then take not from the
+    subsys tab but from the "List of top-level requirements" tab.
     '''
-    bynative = {s.name:s for s in book.sheets()}
-    code_tab = [k for k in list(bynative.keys()) if "chapter codes" in k.lower()][0]
-    code_sheet = bynative[code_tab]
-    codes = [r[0].value for r in rows(code_sheet,2) if r[0]]
+    bytab = {s.name:s for s in book.sheets()}
+    tabs = bytab.keys()
 
-    ss_tabname = [k for k in list(bynative.keys()) if k in codes]
-    if len(ss_tabname) != 1:
-        #print ("failed to find subsys code in sheet tab names, using default")
-        ss_tabname = ["Your chapter (use code)"]
-    ss_tabname = ss_tabname[0]
-    if chapter_code == "TOP":
-        ss_tabname = "List of top-level requirements"
+    tl_patterns = ["top-level with latex","list of top-level requirements"]
+    tl_tabname = get_matches(tl_patterns, tabs)[0] # may fail to find tab
+    tl_sheet = bytab[tl_tabname]
 
-    chapter_sheet = bynative[ss_tabname]
+    if chapter_code in top:
+        ss_sheet = tl_sheet
+    else:
+        ss_patterns = ["your chapter"]
+        ss_tabs = get_matches(ss_patterns, tabs)
+        if not ss_tabs:
+            ss_tabs = get_matches([chapter_code.lower()], tabs)
+        if not ss_tabs:
+            raise (ValueError, "bogus spreadsheet")
+        ss_tabname = ss_tabs[0] # may fail to find tab
+        ss_sheet = bytab[ss_tabname]
 
-    toplevel_tab = [k for k in list(bynative.keys()) if "list of top-level" in k.lower()][0]
-    toplevel_sheet = bynative[toplevel_tab];
+    sel_patterns = ["your selected"]
+    sel_tabname = get_matches(sel_patterns, tabs)[0] # may fail to find tab
+    sel_sheet = bytab[sel_tabname]
 
-    selected_tab = [k for k in list(bynative.keys()) if "selected top-level" in k.lower()][0]
-    selected_sheet = bynative[selected_tab]
-
-    return dict(toplevel=toplevel_sheet,
+    return dict(toplevel=tl_sheet,
                 code=chapter_code,
-                codes=codes,
-                subsys=chapter_sheet,
-                selected=selected_sheet)
+                subsys=ss_sheet,
+                selected=sel_sheet)
     
 all_schema = dict(toplevel = (2, requirements_schema),
                   subsys = (2, requirements_schema),
@@ -124,7 +136,6 @@ def load_book(book, chapter_code):
         ret[name] = load_rows(rows(sheets[name], skip), schema)
     # special case
     ret['code'] = sheets['code']
-    ret['codes'] = sheets['codes']
     return ret
 
 

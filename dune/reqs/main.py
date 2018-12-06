@@ -21,6 +21,34 @@ def dump(xlsfile):
     s = tmpl.render(params = ps.params)
     click.echo(s)
 
+@cli.command("list-params")
+@click.option('-C','--chapter-code', type=str, required=True,
+              help='Select which collection to iterate')
+@click.option('-l','--level', default=0,
+              help='level to dump')
+@click.argument('xlsfile', required=True)
+def render_keys(chapter_code, level, xlsfile):
+    '''
+    List what top-level parameters are given to the template.
+    '''
+    import importlib
+    import xlrd
+    from . import ss
+    book = xlrd.open_workbook(xlsfile)
+    dat = ss.load_book(book, chapter_code)
+    dat = ss.massage(dat);   # fixme: make this an option?
+    keys = sorted(dat.keys())
+    click.echo(' '.join(keys))
+    if level:                   # fixme: make this recursive
+        for key in keys:
+            sub = dat[key]
+            click.echo(key)
+            if hasattr(sub, "keys"):
+                for skey in sorted(sub.keys()):
+                    click.echo("\t%s:%s" % (skey, sub[skey].keys()))
+            click.echo("")
+
+
 @cli.command("render")
 @click.option('-t','--template', required=True, type=click.Path(exists=True),
               help='Set the template file to use to render the parameters')
@@ -158,7 +186,10 @@ def getdocdb(overwrite, tag_file, extension, archive, url_pattern, username, pas
     import sys
     import requests
     import bs4
-    from urllib.parse import urlparse, parse_qs
+    try:
+        from urllib.parse import urlparse, parse_qs
+    except ImportError:         # python2....
+        from urlparse import urlparse, parse_qs
 
     if url.startswith("http://"): # anon
         res = requests.get(url);
