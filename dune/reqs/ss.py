@@ -6,9 +6,9 @@ Tab: List of top-level requirements, starts on line 3
 Same columns as [subsys code]
 
 Tab: [subsys code], starts on line 3
-0  5    6     7    8     9      10   11        14         15
-A  F    G     H    I     J      K    L         O          P
-id,name,label,text,vtext,vlatex,goal,rationale,validation,note
+0  5    6     7    8     9      10   15               16
+A  F    G     H    I     J      K    P                Q
+id,name,label,text,vtext,vlatex,goal,rationale (brief),validation (brief),note
 
 Tab: subsys codes, starts on line 3
 0
@@ -37,8 +37,8 @@ requirements_schema = dict(
     vtext=lambda r: r[8].value,
     vlatex=lambda r: r[9].value,
     goal=lambda r: r[10].value,
-    rationale=lambda r: r[11].value,
-    validation=lambda r: r[14].value,
+    rationale=lambda r: r[15].value,
+    validation=lambda r: r[16].value,
     note=lambda r: r[15].value
 )
 selected_schema = dict(
